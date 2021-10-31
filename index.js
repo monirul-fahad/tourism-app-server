@@ -59,7 +59,6 @@ async function run() {
     app.post("/events", async (req, res) => {
       const event = req.body;
       console.log("hit the post api", event);
-
       const result = await eventsCollection.insertOne(event);
       console.log(result);
       res.json(result);
@@ -69,6 +68,23 @@ async function run() {
     app.post("/orders", async (req, res) => {
       const order = req.body;
       const result = await ordersCollection.insertOne(order);
+      res.json(result);
+    });
+
+    app.put("/orders/:id", async (req, res) => {
+      const id = req.params.id;
+      const filter = { _id: ObjectId(id) };
+      const options = { upsert: true };
+      const updateDoc = {
+        $set: {
+          status: "Approved",
+        },
+      };
+      const result = await ordersCollection.updateOne(
+        filter,
+        updateDoc,
+        options
+      );
       res.json(result);
     });
 
